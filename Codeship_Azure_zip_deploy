@@ -1,0 +1,28 @@
+#Create a folder to zip with subfolder for my application.
+mkdir ~/wwwroot
+mkdir ~/wwwroot/webapps
+
+#Copy my web.config file at the root of by git repository to the folder
+cp ~/clone/web.config ~/wwwroot
+
+#Copy my jar (application) to the folder
+cp -rf ~/clone/target/filename.jar ~/wwwroot/webapps/
+
+#Zip the folder
+cd ~/wwwroot/
+zip -r wwwroot.zip .
+
+#Login to Azure CLI using a service principal
+az login --service-principal --username [USERNAME] --password [PASSWORD] --tenant [TENNAT ID]
+
+#Command to upload the zip folder to Azure. You don't need the subscription if you only have one subscription in your tennat. 
+#The below is down 4 times to illsutrate you can deploy to mulplie regions quickly.
+#Once deployed Azure will auto restart the app so you may experince down time. To avoid this use staging slots and auto swaps.
+
+az webapp deployment source config-zip --subscription "[Subscription ID]" -g [Resource Group Name] -n [Web App Name] --src wwwroot.zip --slot [Slote Name]
+az webapp deployment source config-zip --subscription "[Subscription ID]" -g [Resource Group Name] -n [Web App Name] --src wwwroot.zip --slot [Slote Name]
+az webapp deployment source config-zip --subscription "[Subscription ID]" -g [Resource Group Name] -n [Web App Name] --src wwwroot.zip --slot [Slote Name]
+az webapp deployment source config-zip --subscription "[Subscription ID]" -g [Resource Group Name] -n [Web App Name] --src wwwroot.zip --slot [Slote Name]
+
+#Post to slack when it all done, not required as codeship will post to slack but if you want a custom message.
+curl -X POST --data "payload={\"text\": \"*App* has been deployed and is currently restarting.\"}" https://hooks.slack.com/services/[URL]
